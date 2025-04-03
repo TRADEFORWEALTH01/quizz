@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crypto Trading Risk Assessment Quiz</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; padding: 20px; background-color: #f0f0f0; }
+        .quiz-container { background-color: #fff; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); }
+        h2 { color: #333; }
+        .question { margin-bottom: 15px; font-size: 20px; }
+        .result { font-size: 22px; font-weight: bold; margin-top: 20px; padding: 20px; border-radius: 10px; }
+        .low-risk { background-color: #d4edda; color: #155724; }
+        .medium-risk { background-color: #fff3cd; color: #856404; }
+        .high-risk { background-color: #f8d7da; color: #721c24; }
+        button { padding: 10px 20px; margin-top: 20px; cursor: pointer; background-color: #007bff; color: #fff; border: none; border-radius: 5px; }
+        button:hover { background-color: #0056b3; }
+        .form-link { margin-top: 20px; font-size: 16px; color: #007bff; text-decoration: none; }
+        .form-link:hover { text-decoration: underline; }
+        .result-container { display: flex; flex-direction: column; align-items: center; }
+        .result-bar { width: 100%; background-color: #e0e0e0; border-radius: 25px; overflow: hidden; margin-top: 20px; }
+        .result-bar-inner { height: 30px; border-radius: 25px; }
+        .result-text { font-size: 18px; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <h2>Crypto Trading Risk Assessment Quiz</h2>
+        <div id="quiz">
+            <div class="question" id="question"></div>
+            <div id="options"></div>
+            <button onclick="nextQuestion()">Next</button>
+        </div>
+        <div class="result" id="result" style="display: none;"></div>
+        <a id="form-link" class="form-link" href="https://docs.google.com/forms/d/1ZdVuhisGBUyOmF4O2dmEScb19ASgD9Khhz1xYwRvKso/edit" target="_blank" style="display: none;">Click here to provide your details</a>
+    </div>
+
+    <script>
+        const questions = [
+            { q: "How do you react to market crashes?", options: ["Panic and sell", "Wait and watch", "Buy more"] },
+            { q: "What percentage of your portfolio is in crypto?", options: ["<10%", "10-50%", ">50%"] },
+            { q: "How often do you trade?", options: ["Rarely", "Sometimes", "Daily"] },
+            { q: "What is your experience level with crypto trading?", options: ["Beginner", "Intermediate", "Expert"] },
+            { q: "How much time do you spend researching before making a trade?", options: ["None", "A few hours", "Days"] }
+        ];
+        
+        let currentQuestion = 0;
+        let score = 0;
+        
+        function loadQuestion() {
+            document.getElementById("question").innerText = questions[currentQuestion].q;
+            let optionsHTML = "";
+            questions[currentQuestion].options.forEach((option, index) => {
+                optionsHTML += `<label><input type='radio' name='option' value='${index}'> ${option}</label><br>`;
+            });
+            document.getElementById("options").innerHTML = optionsHTML;
+        }
+        
+        function nextQuestion() {
+            let selected = document.querySelector('input[name="option"]:checked');
+            if (!selected) return alert("Please select an option!");
+            score += parseInt(selected.value);
+            currentQuestion++;
+            if (currentQuestion < questions.length) {
+                loadQuestion();
+            } else {
+                showResult();
+            }
+        }
+        
+        function showResult() {
+            let riskLevel = "";
+            let resultClass = "";
+            let riskPercentage = 0;
+            let resultText = "";
+            if (score <= 3) {
+                riskLevel = "Low Risk Tolerance";
+                resultClass = "low-risk";
+                riskPercentage = 20;
+                resultText = "You have a low tolerance for risk. You prefer stable investments and avoid high volatility.";
+            } else if (score <= 7) {
+                riskLevel = "Medium Risk Tolerance";
+                resultClass = "medium-risk";
+                riskPercentage = 50;
+                resultText = "You have a medium tolerance for risk. You are open to taking some risks but still prefer a balanced approach.";
+            } else {
+                riskLevel = "High Risk Tolerance";
+                resultClass = "high-risk";
+                riskPercentage = 80;
+                resultText = "You have a high tolerance for risk. You are willing to take significant risks for the potential of high rewards.";
+            }
+            
+            document.getElementById("quiz").style.display = "none";
+            document.getElementById("result").style.display = "block";
+            document.getElementById("result").className = `result ${resultClass}`;
+            document.getElementById("result").innerHTML = `<div class="result-container ${resultClass}">
+                Your Risk Profile: <b>${riskLevel}</b><br><br>
+                <div class="result-bar">
+                    <div class="result-bar-inner ${resultClass}" style="width: ${riskPercentage}%; background-color: ${getBarColor(resultClass)};"></div>
+                </div>
+                <div class="result-text">${resultText}</div>
+            </div>`;
+            document.getElementById("form-link").style.display = "block";
+        }
+        
+        function getBarColor(resultClass) {
+            if (resultClass === "low-risk") return "#155724";
+            if (resultClass === "medium-risk") return "#856404";
+            if (resultClass === "high-risk") return "#721c24";
+            return "#000";
+        }
+        
+        loadQuestion();
+    </script>
+</body>
+</html>
